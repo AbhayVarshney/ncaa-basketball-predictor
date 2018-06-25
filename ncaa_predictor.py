@@ -6,6 +6,7 @@ import random
 import csv
 from twitter import *
 import time
+import config
 
 # global
 # list of all stats in college basketball game
@@ -165,12 +166,8 @@ def analyzeSeason(season_data, team_rating):
 def handleTweets():
     username = "NCAA_Predict"
     sleep_time = 1
-    consumer_key = 'LM6Kb96kRsLg4nxmKMUWBO0d3'
-    consumer_secret = 'nDfwyJgzHJnbeBouoLo2MbLQqbyfs0TJ2DBwMPvL9L1MB6qLpG'
-    access_key = '1004280737040773120-mUuBXbaNKwSGWjKNqWNsfR3HWDdbGw'
-    access_secret = 'RMDUMmAukLx0w3w29POUZ7j0sBBP5WOrb6StDA24zZikp'
 
-    auth = OAuth(access_key, access_secret,consumer_key, consumer_secret)
+    auth = OAuth(config.access_key, config.access_secret, config.consumer_key, config.consumer_secret)
     twitter = Twitter(auth=auth)
     stream = TwitterStream(domain="userstream.twitter.com", auth=auth, secure=True)
     tweet_iter = stream.user()
