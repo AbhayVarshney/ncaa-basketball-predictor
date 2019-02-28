@@ -14,6 +14,8 @@ from struct import pack
 import pyaudio
 import wave
 import time
+from PIL import ImageTk, Image
+
 # Imports the Google Cloud client library
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -186,7 +188,7 @@ def handleResponse(input):
     my_response = [
         'So after some calculation, I believe that %s is going to beat %s, with a likelihood of about %s%%.',
         'I feel like %s is going to win against %s. I think there is about %s%% chance that this happens. Good luck!',
-        'I dont know about this but maybe %s is going to beat %s. The chance that this happens is about %s%%. It is your choice!',
+        'I do not know about this but maybe %s is going to beat %s. The chance that this happens is about %s%%. It is your choice!',
         '%s is probably going to beat %s. I think the likelihood of that happening is probably %s%%. Good luck!'
     ]
 
@@ -410,37 +412,42 @@ class Window(Frame):
         self.init_window()
 
     def init_window(self):
-        self.master.title("NCAA Basketball Virtual Assistant")
+        self.master.title("ESPN NCAA Basketball Virtual Assistant")
         self.pack(fill=BOTH, expand=1)
-        title = Label(root, text="ESPN NCAA Virtual Assistant: Jarvis", font="Times 18")
-        title.place(x=80, y=10)
+        title = Label(root, text="ESPN NCAA Virtual Assistant: James", font="Times 18")
+        title.place(x=50, y=90)
         beginRecordingButton = Button(self, text="Ask Me", command=self.client_exit, width=20)
-        beginRecordingButton.place(x=110, y=40)
+        beginRecordingButton.place(x=90, y=120)
+        load = Image.open("resources/MarchMadness.jpg")
+        load = load.resize((160, 70), Image.ANTIALIAS)
+        render = ImageTk.PhotoImage(load)
+        img = Label(self, image=render)
+        img.image = render
+        img.place(x=110, y=10)
         createModel()  # Create Linear Regression Model
 
     def client_exit(self):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "seventh-magnet-232908-69c8bb828ad7.json"
         os.environ["GCLOUD_PROJECT"] = "seventh-magnet-232908"
-        jarvisMsg = "Hi there, my name is Jarvis. I'm your Basketball Predictor assistant. How may I help you?"
-        initialSpeech = Label(root, text="Jarvis: " + jarvisMsg, font="Times 15", wraplength=400, justify=LEFT)
-        initialSpeech.place(x=10, y=140)
-        clientSpeak(jarvisMsg)
-        time.sleep(7)
+        jamesMsg = "Hi there, my name is James. I'm your N C Double A Basketball Predictor assistant. How may I help you?"
+        initialSpeech = Label(root, text="James: " + jamesMsg, font="Times 15", wraplength=380, justify=LEFT)
+        initialSpeech.place(x=10, y=220)
+        clientSpeak(jamesMsg)
+        time.sleep(6.3)
         recordUser("resources/userOutputResp.wav")
         print("Analyzing text...")
         userText = googleSpeechToTextQuery()
-        userSpeech = Label(root, text="You: " + userText, font="Times 15", wraplength=400, justify=LEFT)
-        userSpeech.place(x=10, y=90)
+        userSpeech = Label(root, text="You: " + userText, font="Times 15", wraplength=380, justify=LEFT)
+        userSpeech.place(x=10, y=170)
         print("Transcription:", userText)
         resp = handleResponse(userText)
         print("Computer output: ", resp)
-        jarvisSpeech = Label(root, text="Jarvis: " + resp, font="Times 15", wraplength=400, justify=LEFT)
-        jarvisSpeech.place(x=10, y=140)
+        jamesSpeech = Label(root, text="James: " + resp, font="Times 15", wraplength=380, justify=LEFT)
+        jamesSpeech.place(x=10, y=220)
         clientSpeak(resp)
 
 
 root = Tk()
 root.geometry("400x300")
-
 app = Window(root)
 root.mainloop()
