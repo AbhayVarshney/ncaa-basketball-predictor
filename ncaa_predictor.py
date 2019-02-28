@@ -130,7 +130,7 @@ def analyzeSeason(season_data, team_rating):
         if column['Wloc'] == 'H':  # home team gets 100 in ranking
             team_a_ranking = 100 + getRating(column['Wteam'], myYear, team_rating)
             team_b_ranking = getRating(column['Lteam'], myYear, team_rating)
-        else:
+        else: # a loss
             team_a_ranking = getRating(column['Wteam'], myYear, team_rating)
             team_b_ranking = 100 + getRating(column['Lteam'], myYear, team_rating)
         copy_team_a_ranking = [team_a_ranking]
@@ -139,7 +139,7 @@ def analyzeSeason(season_data, team_rating):
         for field in stats_fields:
             team_a_stats = calculateStatistics(column['Wteam'], myYear, field)
             team_b_stats = calculateStatistics(column['Lteam'], myYear, field)
-            if team_a_stats is  0 and team_b_stats is 0:
+            if team_a_stats is 0 and team_b_stats is 0:
                 isUsable = False  # can't use these stats
             else:
                 copy_team_a_ranking.append(team_a_stats)
