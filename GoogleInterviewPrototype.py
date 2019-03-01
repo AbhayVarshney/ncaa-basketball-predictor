@@ -187,9 +187,9 @@ def handleResponse(input):
 
     my_response = [
         'So after some calculation, I believe that %s is going to beat %s, with a likelihood of about %s%%.',
-        'I feel like %s is going to win against %s. I think there is about %s%% chance that this happens. Good luck!',
+        'I feel like %s is going to win against %s. I think there is about a %s%% chance that this happens. Good luck!',
         'I do not know about this but maybe %s is going to beat %s. The chance that this happens is about %s%%. It is your choice!',
-        '%s is probably going to beat %s. I think the likelihood of that happening is probably %s%%. Good luck!'
+        '%s is probably going to beat %s. I think the likelihood of that happening is about %s%%. Good luck!'
     ]
 
     matchups = []
@@ -197,7 +197,12 @@ def handleResponse(input):
         if team.lower() in input.lower() and len(matchups) < 2:
             matchups.append(team)
     if len(matchups) != 2:
-        return "Sorry, the team that you asked about isn't in the NCAA tournament!"
+        if "zion" in input.lower():
+            return "Zion Williamson is currently averaging 21.6 points per game, 8.8 rebounds per game, and 2.2 assists per game for the Duke Blue Devils."
+        elif "longhorns" in input.lower():
+            return "Currently, the Texas Longhorn's has a record of 23 wins and 5 losses."
+        else:
+            return "Sorry, the team that you asked about isn't in the NCAA tournament!"
     else:
         csv_file = csv.reader(open('my_data/my_predictions.csv', "rt"), delimiter=",")
         for row in csv_file:
@@ -414,7 +419,7 @@ class Window(Frame):
     def init_window(self):
         self.master.title("ESPN NCAA Basketball Virtual Assistant")
         self.pack(fill=BOTH, expand=1)
-        title = Label(root, text="ESPN NCAA Virtual Assistant: James", font="Times 18")
+        title = Label(root, text="ESPN NCAA Virtual Assistant: James", font="Helvetica 18")
         title.place(x=50, y=90)
         beginRecordingButton = Button(self, text="Ask Me", command=self.client_exit, width=20)
         beginRecordingButton.place(x=90, y=120)
@@ -429,24 +434,34 @@ class Window(Frame):
     def client_exit(self):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "seventh-magnet-232908-69c8bb828ad7.json"
         os.environ["GCLOUD_PROJECT"] = "seventh-magnet-232908"
-        jamesMsg = "Hi there, my name is James. I'm your N C Double A Basketball Predictor assistant. How may I help you?"
-        initialSpeech = Label(root, text="James: " + jamesMsg, font="Times 15", wraplength=380, justify=LEFT)
+        global isFirstMessage
+        if isFirstMessage:
+            jamesMsg = "Hi there, my name is James. I'm your NCAA Basketball professional assistant. How may I help you?"
+        else:
+            jamesMsg = "Sure, how else may I be of your assistance?"
+        initialSpeech = Label(self, text="James: " + jamesMsg, font="Helvetica 15", wraplength=360, justify=LEFT)
         initialSpeech.place(x=10, y=220)
         clientSpeak(jamesMsg)
-        time.sleep(6.3)
+        if isFirstMessage:
+            time.sleep(6.55)
+            isFirstMessage = False
+        else:
+            time.sleep(2.5)
+        print("Speak now...")
         recordUser("resources/userOutputResp.wav")
         print("Analyzing text...")
         userText = googleSpeechToTextQuery()
-        userSpeech = Label(root, text="You: " + userText, font="Times 15", wraplength=380, justify=LEFT)
+        userSpeech = Label(self, text="You: " + userText, font="Helvetica 15", wraplength=360, justify=LEFT)
         userSpeech.place(x=10, y=170)
         print("Transcription:", userText)
         resp = handleResponse(userText)
         print("Computer output: ", resp)
-        jamesSpeech = Label(root, text="James: " + resp, font="Times 15", wraplength=380, justify=LEFT)
+        jamesSpeech = Label(self, text="James: " + resp, font="Helvetica 15", wraplength=360, justify=LEFT)
         jamesSpeech.place(x=10, y=220)
         clientSpeak(resp)
 
 
+isFirstMessage = True
 root = Tk()
 root.geometry("400x300")
 app = Window(root)
